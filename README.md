@@ -227,7 +227,7 @@ npm run lint
 
 ## 📄 License
 
-MIT © [Jose Maria Molina](https://github.com/your-username)
+MIT © [Jose Maria Molina](https://github.com/josmolmor)
 
 ## 🤝 Contributing
 
@@ -239,4 +239,4 @@ Check out the [examples directory](./examples) for more usage patterns and integ
 
 ---
 
-Made with ❤️ by [Jose Maria Molina](https://molina.digital)
+Made by [Jose Maria Molina](https://molina.digital)

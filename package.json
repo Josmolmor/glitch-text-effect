@@ -1,6 +1,6 @@
 {
   "name": "glitch-text-effect",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "description": "A lightweight, customizable glitch text effect library with zero dependencies. Framework-agnostic core with React wrapper.",
   "main": "dist/index.js",
@@ -54,12 +54,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/glitch-text-effect.git"
+    "url": "https://github.com/josmolmor/glitch-text-effect.git"
   },
   "bugs": {
-    "url": "https://github.com/your-username/glitch-text-effect/issues"
+    "url": "https://github.com/josmolmor/glitch-text-effect/issues"
   },
-  "homepage": "https://github.com/your-username/glitch-text-effect#readme",
+  "homepage": "https://github.com/josmolmor/glitch-text-effect#readme",
   "peerDependencies": {
     "react": ">=16.8.0",
     "react-dom": ">=16.8.0"
