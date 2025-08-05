@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glitch Text Effect - Vanilla JS Example</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 40px;
+            background: #0a0a0a;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 60px;
+            font-size: 3rem;
+        }
+        
+        .example {
+            margin: 40px 0;
+            padding: 30px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            background: #111;
+        }
+        
+        .example h2 {
+            margin-top: 0;
+            color: #4ade80;
+            font-size: 1.2rem;
+        }
+        
+        .text-demo {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        
+        .text-demo:hover {
+            color: #4ade80;
+        }
+        
+        .controls {
+            margin-top: 20px;
+        }
+        
+        button {
+            background: #4ade80;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+            font-weight: 600;
+        }
+        
+        button:hover {
+            background: #16a34a;
+        }
+        
+        .code {
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            overflow-x: auto;
+        }
+        
+        code {
+            color: #e5e7eb;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Glitch Text Effect Examples</h1>
+        
+        <!-- Hover Example -->
+        <div class="example">
+            <h2>Hover Effect</h2>
+            <div id="hover-text" class="text-demo">Hover over me!</div>
+            <div class="code">
+                <code>glitch(element, { from: 'Hover over me!', to: 'Glitch Effect!', trigger: 'hover' });</code>
+            </div>
+        </div>
+        
+        <!-- Click Example -->
+        <div class="example">
+            <h2>Click Effect</h2>
+            <div id="click-text" class="text-demo">Click me!</div>
+            <div class="code">
+                <code>glitch(element, { from: 'Click me!', to: 'Clicked!', trigger: 'click' });</code>
+            </div>
+        </div>
+        
+        <!-- Manual Control -->
+        <div class="example">
+            <h2>Manual Control</h2>
+            <div id="manual-text" class="text-demo">Manual Control</div>
+            <div class="controls">
+                <button onclick="startManualGlitch()">Start</button>
+                <button onclick="resetManualGlitch()">Reset</button>
+            </div>
+            <div class="code">
+                <code>const instance = createGlitch(element, { from: 'Manual Control', to: 'Controlled!' });</code>
+            </div>
+        </div>
+        
+        <!-- High Intensity -->
+        <div class="example">
+            <h2>High Intensity with Effects</h2>
+            <div id="intense-text" class="text-demo">Intense Effect</div>
+            <div class="code">
+                <code>glitch(element, { from: 'Intense Effect', to: 'CHAOS!', intensity: 'high', effects: { shake: true, flicker: true, colorShift: true } });</code>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include the library (replace with actual CDN/local path) -->
+    <script type="module">
+        // This would be: import { glitch, createGlitch } from 'glitch-text-effect';
+        // For demo purposes, we'll simulate the API
+        
+        // Hover effect
+        const hoverElement = document.getElementById('hover-text');
+        hoverElement.addEventListener('mouseenter', () => {
+            simulateGlitch(hoverElement, 'Hover over me!', 'Glitch Effect!');
+        });
+        hoverElement.addEventListener('mouseleave', () => {
+            hoverElement.textContent = 'Hover over me!';
+        });
+        
+        // Click effect
+        const clickElement = document.getElementById('click-text');
+        clickElement.addEventListener('click', () => {
+            simulateGlitch(clickElement, 'Click me!', 'Clicked!');
+        });
+        
+        // Manual control
+        let manualInstance = null;
+        window.startManualGlitch = () => {
+            const element = document.getElementById('manual-text');
+            simulateGlitch(element, 'Manual Control', 'Controlled!');
+        };
+        
+        window.resetManualGlitch = () => {
+            document.getElementById('manual-text').textContent = 'Manual Control';
+        };
+        
+        // High intensity
+        const intenseElement = document.getElementById('intense-text');
+        intenseElement.addEventListener('mouseenter', () => {
+            simulateGlitch(intenseElement, 'Intense Effect', 'CHAOS!', true);
+        });
+        intenseElement.addEventListener('mouseleave', () => {
+            intenseElement.textContent = 'Intense Effect';
+        });
+        
+        // Simulation function for demo purposes
+        function simulateGlitch(element, from, to, intense = false) {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
+            const duration = intense ? 2000 : 1200;
+            const maxLength = Math.max(from.length, to.length);
+            let startTime = performance.now();
+            
+            if (intense) {
+                element.style.animation = 'shake 0.1s infinite';
+            }
+            
+            function animate() {
+                const elapsed = performance.now() - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                let result = '';
+                for (let i = 0; i < maxLength; i++) {
+                    if (progress > (i / maxLength) + 0.3) {
+                        result += to[i] || ' ';
+                    } else if (Math.random() < 0.7) {
+                        result += characters[Math.floor(Math.random() * characters.length)];
+                    } else {
+                        result += from[i] || ' ';
+                    }
+                }
+                
+                element.textContent = result;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    element.textContent = to;
+                    element.style.animation = '';
+                }
+            }
+            
+            animate();
+        }
+    </script>
+    
+    <style>
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10% { transform: translateX(-1px) translateY(1px); }
+            20% { transform: translateX(1px) translateY(-1px); }
+            30% { transform: translateX(-1px) translateY(-1px); }
+            40% { transform: translateX(1px) translateY(1px); }
+            50% { transform: translateX(-1px) translateY(1px); }
+            60% { transform: translateX(1px) translateY(-1px); }
+            70% { transform: translateX(-1px) translateY(-1px); }
+            80% { transform: translateX(1px) translateY(1px); }
+            90% { transform: translateX(-1px) translateY(-1px); }
+        }
+    </style>
+</body>
+</html>

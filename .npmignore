@@ -1,0 +1,49 @@
+# Source files
+src/
+
+# Development files
+examples/
+docs/
+.vscode/
+.idea/
+
+# Build configuration
+rollup.config.js
+tsconfig.json
+.eslintrc.js
+jest.config.js
+
+# Development dependencies and scripts
+node_modules/
+*.tsbuildinfo
+
+# Environment and cache
+.env*
+.cache/
+.nyc_output/
+coverage/
+
+# Logs
+logs/
+*.log
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Editor files
+*.swp
+*.swo
+*~
+
+# Testing
+__tests__/
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
