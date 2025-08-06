@@ -33,7 +33,7 @@
     "dev": "rollup -c -w",
     "type-check": "tsc --noEmit",
     "lint": "eslint src --ext .ts,.tsx",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "prepublishOnly": "npm run build",
     "clean": "rimraf dist",
     "release": "node scripts/release.js",

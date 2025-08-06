@@ -19,7 +19,8 @@
       "Bash(npm info:*)",
       "WebFetch(domain:api.npmjs.org)",
       "WebFetch(domain:npmtrends.com)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(npm test)"
     ],
     "deny": []
   }

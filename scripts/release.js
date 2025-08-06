@@ -124,8 +124,7 @@ function checkGitBranch() {
   try {
     const branch = exec('git branch --show-current', { silent: true }).trim();
     if (branch !== 'master' && branch !== 'main') {
-      warning(`You are on branch '${branch}', not main/master. Continue? (y/N)`);
-      // For automation, we'll continue but warn
+      error(`Releases can only be made from main/master branch. Current branch: ${branch}`);
     }
     info(`Current branch: ${branch}`);
   } catch (err) {
