@@ -1,4 +1,9 @@
-import type { GlitchConfig, GlitchInstance, AnimationState, ColorShiftConfig } from '../types/types';
+import type {
+  GlitchConfig,
+  GlitchInstance,
+  AnimationState,
+  ColorShiftConfig,
+} from "../types/types";
 import {
   getCharacterSet,
   getTimingFunction,
@@ -6,28 +11,30 @@ import {
   normalizeTextLengths,
   shouldRevealCharacter,
   prefersReducedMotion,
-  clamp
-} from '../utils/utils';
+  clamp,
+} from "../utils/utils";
 
 /**
  * Default configuration for glitch effect
  */
-const DEFAULT_CONFIG: Required<Omit<GlitchConfig, 'from' | 'to' | 'onStart' | 'onProgress' | 'onComplete'>> = {
+const DEFAULT_CONFIG: Required<
+  Omit<GlitchConfig, "from" | "to" | "onStart" | "onProgress" | "onComplete">
+> = {
   duration: 1200,
-  trigger: 'hover',
-  intensity: 'medium',
-  characters: 'letters',
-  timing: 'easeOut',
+  trigger: "hover",
+  intensity: "medium",
+  characters: "letters",
+  timing: "easeOut",
   revealRate: 0.5,
   glitchRate: 0.6,
   effects: {
     shake: true,
     flicker: false,
     colorShift: false,
-    scalePulse: false
+    scalePulse: false,
   },
   respectReducedMotion: true,
-  className: ''
+  className: "",
 };
 
 /**
@@ -48,42 +55,61 @@ export class GlitchEngine {
     this.element = element;
     this.originalText = config.from;
     this.targetText = config.to;
-    
+
     // Merge with intensity preset and defaults
-    const intensityPreset = config.intensity ? getIntensityPreset(config.intensity) : {};
+    const intensityPreset = config.intensity
+      ? getIntensityPreset(config.intensity)
+      : {};
     this.config = {
       ...DEFAULT_CONFIG,
       ...intensityPreset,
       ...config,
-      effects: { 
-        ...DEFAULT_CONFIG.effects, 
-        ...intensityPreset.effects, 
-        ...(config.effects || {}) 
-      }
+      effects: {
+        ...DEFAULT_CONFIG.effects,
+        ...intensityPreset.effects,
+        ...(config.effects || {}),
+      },
     } as Required<GlitchConfig>;
 
     // Normalize text lengths
-    const [normalizedFrom, normalizedTo] = normalizeTextLengths(this.originalText, this.targetText);
+    const [normalizedFrom, normalizedTo] = normalizeTextLengths(
+      this.originalText,
+      this.targetText
+    );
     this.originalText = normalizedFrom;
     this.targetText = normalizedTo;
 
     // Setup character set and timing function
     this.characterSet = getCharacterSet(this.config.characters);
     this.timingFunction = getTimingFunction(this.config.timing);
-    
+
     // Setup color shift configuration
     if (this.config.effects.colorShift) {
-      if (typeof this.config.effects.colorShift === 'boolean') {
+      if (typeof this.config.effects.colorShift === "boolean") {
         this.colorShiftConfig = {
           enabled: true,
-          colors: ['#ff0080', '#00ff80', '#8000ff', '#ff8000', '#0080ff', '#ffffff'],
-          speed: 1
+          colors: [
+            "#ff0080",
+            "#00ff80",
+            "#8000ff",
+            "#ff8000",
+            "#0080ff",
+            "#ffffff",
+          ],
+          speed: 1,
         };
       } else {
         this.colorShiftConfig = {
-          colors: ['#ff0080', '#00ff80', '#8000ff', '#ff8000', '#0080ff', '#ffffff'],
+          colors: [
+            "#ff0080",
+            "#00ff80",
+            "#8000ff",
+            "#ff8000",
+            "#0080ff",
+            "#ffffff",
+          ],
           speed: 1,
-          ...this.config.effects.colorShift
+          ...this.config.effects.colorShift,
         };
       }
     }
@@ -93,7 +119,7 @@ export class GlitchEngine {
       isRunning: false,
       startTime: 0,
       currentText: this.originalText,
-      revealedIndices: new Set()
+      revealedIndices: new Set(),
     };
 
     // Set initial text
@@ -105,7 +131,7 @@ export class GlitchEngine {
    */
   public start(): void {
     if (this.state.isRunning) return;
-    
+
     // Respect reduced motion preference
     if (this.config.respectReducedMotion && prefersReducedMotion()) {
       this.updateElementText(this.targetText);
@@ -131,7 +157,7 @@ export class GlitchEngine {
    */
   public stop(): void {
     if (!this.state.isRunning) return;
-    
+
     this.state.isRunning = false;
     if (this.state.animationId) {
       cancelAnimationFrame(this.state.animationId);
@@ -178,7 +204,7 @@ export class GlitchEngine {
 
     // Generate current frame text
     this.generateFrameText(easedProgress);
-    
+
     // Handle color shifting
     this.updateColorShift(progress);
 
@@ -204,11 +230,16 @@ export class GlitchEngine {
    */
   private generateFrameText(progress: number): void {
     const textLength = this.targetText.length;
-    let frameText = '';
+    let frameText = "";
 
     for (let i = 0; i < textLength; i++) {
-      const shouldReveal = shouldRevealCharacter(i, textLength, progress, this.config.revealRate);
-      
+      const shouldReveal = shouldRevealCharacter(
+        i,
+        textLength,
+        progress,
+        this.config.revealRate
+      );
+
       if (shouldReveal && !this.state.revealedIndices.has(i)) {
         this.state.revealedIndices.add(i);
       }
@@ -218,7 +249,7 @@ export class GlitchEngine {
       } else if (Math.random() < this.config.glitchRate) {
         frameText += this.getRandomCharacterForPosition(i);
       } else {
-        frameText += this.originalText[i] || ' ';
+        frameText += this.originalText[i] || " ";
       }
     }
 
@@ -231,7 +262,9 @@ export class GlitchEngine {
    */
   private getRandomCharacterForPosition(_index: number): string {
     // Use index for more consistent randomization per position
-    return this.characterSet[Math.floor(Math.random() * this.characterSet.length)];
+    return this.characterSet[
+      Math.floor(Math.random() * this.characterSet.length)
+    ];
   }
 
   /**
@@ -246,13 +279,14 @@ export class GlitchEngine {
   /**
    * Update color shifting effect
    */
-  private updateColorShift(progress: number): void {
-    if (!this.colorShiftConfig?.enabled || !this.colorShiftConfig.colors) return;
-    
+  private updateColorShift(_progress: number): void {
+    if (!this.colorShiftConfig?.enabled || !this.colorShiftConfig.colors)
+      return;
+
     const { colors, speed = 1 } = this.colorShiftConfig;
     const colorChangeInterval = 100 * speed; // Base interval in ms
     const elapsed = performance.now() - this.state.startTime;
-    
+
     // Change color at intervals
     if (Math.floor(elapsed / colorChangeInterval) !== this.currentColorIndex) {
       this.currentColorIndex = Math.floor(Math.random() * colors.length);
@@ -265,34 +299,38 @@ export class GlitchEngine {
    */
   private applyVisualEffects(apply: boolean): void {
     const { effects } = this.config;
-    
+
     if (effects.shake) {
-      this.element.style.animation = apply ? 'glitch-shake 0.1s infinite' : '';
+      this.element.style.animation = apply ? "glitch-shake 0.1s infinite" : "";
     }
-    
+
     if (effects.flicker) {
-      this.element.style.animation = apply 
+      this.element.style.animation = apply
         ? `${this.element.style.animation} glitch-flicker 0.15s infinite`.trim()
-        : this.element.style.animation.replace('glitch-flicker 0.15s infinite', '').trim();
+        : this.element.style.animation
+            .replace("glitch-flicker 0.15s infinite", "")
+            .trim();
     }
-    
+
     if (effects.scalePulse) {
       this.element.style.animation = apply
         ? `${this.element.style.animation} glitch-scale-pulse 0.3s infinite`.trim()
-        : this.element.style.animation.replace('glitch-scale-pulse 0.3s infinite', '').trim();
+        : this.element.style.animation
+            .replace("glitch-scale-pulse 0.3s infinite", "")
+            .trim();
     }
 
     // Color shift is now handled dynamically in updateColorShift method
     if (!apply && this.colorShiftConfig?.enabled) {
-      this.element.style.color = ''; // Reset color
+      this.element.style.color = ""; // Reset color
     }
 
     // Apply custom class
     if (this.config.className) {
       if (apply) {
-        this.element.classList.add(...this.config.className.split(' '));
+        this.element.classList.add(...this.config.className.split(" "));
       } else {
-        this.element.classList.remove(...this.config.className.split(' '));
+        this.element.classList.remove(...this.config.className.split(" "));
       }
     }
   }
@@ -301,29 +339,35 @@ export class GlitchEngine {
 /**
  * Factory function to create glitch instance
  */
-export function createGlitch(element: HTMLElement, config: GlitchConfig): GlitchInstance {
+export function createGlitch(
+  element: HTMLElement,
+  config: GlitchConfig
+): GlitchInstance {
   const engine = new GlitchEngine(element, config);
-  
+
   return {
     start: () => engine.start(),
     stop: () => engine.stop(),
     reset: () => engine.reset(),
     isRunning: () => engine.isRunning(),
-    destroy: () => engine.destroy()
+    destroy: () => engine.destroy(),
   };
 }
 
 /**
  * Convenience function for quick glitch effect
  */
-export function glitch(element: HTMLElement, config: GlitchConfig): Promise<void> {
+export function glitch(
+  element: HTMLElement,
+  config: GlitchConfig
+): Promise<void> {
   return new Promise((resolve) => {
     const instance = createGlitch(element, {
       ...config,
       onComplete: () => {
         config.onComplete?.();
         resolve();
-      }
+      },
     });
     instance.start();
   });
