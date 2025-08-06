@@ -134,11 +134,37 @@ function ManualExample() {
   effects={{
     shake: true,        // Subtle trembling
     flicker: true,      // Opacity variation
-    colorShift: true,   // Hue rotation
+    colorShift: true,   // Color cycling (default colors)
     scalePulse: true    // Size pulsing
   }}
 />
 ```
+
+### 🌈 Custom Color Shifting
+
+Customize the colors and animation speed for color shifting:
+
+```jsx
+<GlitchText
+  from="Custom Colors"
+  to="Rainbow!"
+  effects={{
+    colorShift: {
+      enabled: true,
+      colors: ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57'],
+      speed: 2  // Animation speed multiplier
+    }
+  }}
+/>
+```
+
+#### ColorShift Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `enabled` | `boolean` | `true` | Enable color shifting |
+| `colors` | `string[]` | `['#ff0080', '#00ff80', '#8000ff', '#ff8000', '#0080ff', '#ffffff']` | Array of hex colors to cycle through |
+| `speed` | `number` | `1` | Animation speed multiplier (higher = faster) |
 
 ## 🏗️ Vanilla JavaScript API
 
@@ -166,7 +192,14 @@ const instance = createGlitch(element, {
   from: 'Hello',
   to: 'World',
   duration: 2000,
-  intensity: 'high'
+  intensity: 'high',
+  effects: {
+    colorShift: {
+      enabled: true,
+      colors: ['#ff0080', '#00ff80', '#8000ff'],
+      speed: 1.5
+    }
+  }
 });
 
 // Control manually

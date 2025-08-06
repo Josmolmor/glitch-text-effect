@@ -12,7 +12,14 @@
       "Bash(git commit:*)",
       "Bash(git remote add:*)",
       "Bash(git push:*)",
-      "Bash(gh repo create:*)"
+      "Bash(gh repo create:*)",
+      "Bash(npm publish:*)",
+      "Bash(gzip:*)",
+      "Bash(node:*)",
+      "Bash(npm info:*)",
+      "WebFetch(domain:api.npmjs.org)",
+      "WebFetch(domain:npmtrends.com)",
+      "Bash(chmod:*)"
     ],
     "deny": []
   }

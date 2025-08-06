@@ -1,4 +1,4 @@
-import type { GlitchConfig, GlitchInstance, AnimationState } from '../types/types';
+import type { GlitchConfig, GlitchInstance, AnimationState, ColorShiftConfig } from '../types/types';
 import {
   getCharacterSet,
   getTimingFunction,
@@ -41,6 +41,8 @@ export class GlitchEngine {
   private targetText: string;
   private characterSet: string;
   private timingFunction: (_progress: number) => number;
+  private colorShiftConfig: ColorShiftConfig | null = null;
+  private currentColorIndex: number = 0;
 
   constructor(element: HTMLElement, config: GlitchConfig) {
     this.element = element;
@@ -68,6 +70,23 @@ export class GlitchEngine {
     // Setup character set and timing function
     this.characterSet = getCharacterSet(this.config.characters);
     this.timingFunction = getTimingFunction(this.config.timing);
+    
+    // Setup color shift configuration
+    if (this.config.effects.colorShift) {
+      if (typeof this.config.effects.colorShift === 'boolean') {
+        this.colorShiftConfig = {
+          enabled: true,
+          colors: ['#ff0080', '#00ff80', '#8000ff', '#ff8000', '#0080ff', '#ffffff'],
+          speed: 1
+        };
+      } else {
+        this.colorShiftConfig = {
+          colors: ['#ff0080', '#00ff80', '#8000ff', '#ff8000', '#0080ff', '#ffffff'],
+          speed: 1,
+          ...this.config.effects.colorShift
+        };
+      }
+    }
 
     // Initialize state
     this.state = {
@@ -159,6 +178,9 @@ export class GlitchEngine {
 
     // Generate current frame text
     this.generateFrameText(easedProgress);
+    
+    // Handle color shifting
+    this.updateColorShift(progress);
 
     // Progress callback
     this.config.onProgress?.(progress);
@@ -222,6 +244,23 @@ export class GlitchEngine {
   }
 
   /**
+   * Update color shifting effect
+   */
+  private updateColorShift(progress: number): void {
+    if (!this.colorShiftConfig?.enabled || !this.colorShiftConfig.colors) return;
+    
+    const { colors, speed = 1 } = this.colorShiftConfig;
+    const colorChangeInterval = 100 * speed; // Base interval in ms
+    const elapsed = performance.now() - this.state.startTime;
+    
+    // Change color at intervals
+    if (Math.floor(elapsed / colorChangeInterval) !== this.currentColorIndex) {
+      this.currentColorIndex = Math.floor(Math.random() * colors.length);
+      this.element.style.color = colors[this.currentColorIndex];
+    }
+  }
+
+  /**
    * Apply or remove visual effects
    */
   private applyVisualEffects(apply: boolean): void {
@@ -237,16 +276,15 @@ export class GlitchEngine {
         : this.element.style.animation.replace('glitch-flicker 0.15s infinite', '').trim();
     }
     
-    if (effects.colorShift) {
-      this.element.style.animation = apply
-        ? `${this.element.style.animation} glitch-color-shift 0.2s infinite`.trim()
-        : this.element.style.animation.replace('glitch-color-shift 0.2s infinite', '').trim();
-    }
-    
     if (effects.scalePulse) {
       this.element.style.animation = apply
         ? `${this.element.style.animation} glitch-scale-pulse 0.3s infinite`.trim()
         : this.element.style.animation.replace('glitch-scale-pulse 0.3s infinite', '').trim();
+    }
+
+    // Color shift is now handled dynamically in updateColorShift method
+    if (!apply && this.colorShiftConfig?.enabled) {
+      this.element.style.color = ''; // Reset color
     }
 
     // Apply custom class

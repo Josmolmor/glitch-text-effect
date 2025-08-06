@@ -47,9 +47,6 @@
             transition: color 0.2s;
         }
         
-        .text-demo:hover {
-            color: #4ade80;
-        }
         
         .controls {
             margin-top: 20px;
@@ -89,6 +86,17 @@
     <div class="container">
         <h1>Glitch Text Effect Examples</h1>
         
+        <!-- Reduced Motion Test -->
+        <div class="example">
+            <h2>Reduced Motion Test</h2>
+            <div id="reduced-motion-info" style="margin-bottom: 15px; padding: 10px; background: #222; border-radius: 5px;">
+                <span id="motion-preference">Checking...</span>
+                <br>
+                <small>Enable "Reduce Motion" in your OS accessibility settings to test this feature</small>
+            </div>
+            <div id="reduced-motion-text" class="text-demo">Reduced Motion Test</div>
+        </div>
+        
         <!-- Hover Example -->
         <div class="example">
             <h2>Hover Effect</h2>
@@ -126,6 +134,15 @@
             <div id="intense-text" class="text-demo">Intense Effect</div>
             <div class="code">
                 <code>glitch(element, { from: 'Intense Effect', to: 'CHAOS!', intensity: 'high', effects: { shake: true, flicker: true, colorShift: true } });</code>
+            </div>
+        </div>
+        
+        <!-- Custom Colors -->
+        <div class="example">
+            <h2>Custom Color Shifting</h2>
+            <div id="custom-colors-text" class="text-demo">Custom Colors</div>
+            <div class="code">
+                <code>glitch(element, { from: 'Custom Colors', to: 'Rainbow!', effects: { colorShift: { enabled: true, colors: ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57'], speed: 2 } } });</code>
             </div>
         </div>
     </div>
@@ -170,9 +187,49 @@
             intenseElement.textContent = 'Intense Effect';
         });
         
+        // Custom colors
+        const customColorsElement = document.getElementById('custom-colors-text');
+        customColorsElement.addEventListener('mouseenter', () => {
+            simulateGlitch(customColorsElement, 'Custom Colors', 'Rainbow!', false, ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57']);
+        });
+        customColorsElement.addEventListener('mouseleave', () => {
+            customColorsElement.textContent = 'Custom Colors';
+        });
+        
+        // Reduced motion test
+        function checkReducedMotion() {
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const infoElement = document.getElementById('motion-preference');
+            infoElement.textContent = prefersReducedMotion 
+                ? 'Reduced motion is ENABLED - animations should be skipped' 
+                : 'Reduced motion is DISABLED - animations should work normally';
+            infoElement.style.color = prefersReducedMotion ? '#ff6b6b' : '#4ade80';
+            return prefersReducedMotion;
+        }
+        
+        // Check reduced motion preference on load and when it changes
+        checkReducedMotion();
+        window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', checkReducedMotion);
+        
+        const reducedMotionElement = document.getElementById('reduced-motion-text');
+        reducedMotionElement.addEventListener('mouseenter', () => {
+            const prefersReduced = checkReducedMotion();
+            if (prefersReduced) {
+                // When reduced motion is preferred, just change text immediately
+                reducedMotionElement.textContent = 'Animation Skipped!';
+            } else {
+                simulateGlitch(reducedMotionElement, 'Reduced Motion Test', 'Animation Works!');
+            }
+        });
+        reducedMotionElement.addEventListener('mouseleave', () => {
+            reducedMotionElement.textContent = 'Reduced Motion Test';
+        });
+        
         // Simulation function for demo purposes
-        function simulateGlitch(element, from, to, intense = false) {
+        function simulateGlitch(element, from, to, intense = false, customColors = null) {
             const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
+            const defaultColors = ['#ff0080', '#00ff80', '#8000ff', '#ff8000', '#0080ff', '#ffffff'];
+            const colors = customColors || defaultColors;
             const duration = intense ? 2000 : 1200;
             const maxLength = Math.max(from.length, to.length);
             let startTime = performance.now();
@@ -198,11 +255,17 @@
                 
                 element.textContent = result;
                 
+                // Add color shift for effects (both intense and custom colors)
+                if ((intense || customColors) && progress < 1) {
+                    element.style.color = colors[Math.floor(Math.random() * colors.length)];
+                }
+                
                 if (progress < 1) {
                     requestAnimationFrame(animate);
                 } else {
                     element.textContent = to;
                     element.style.animation = '';
+                    element.style.color = '#ffffff'; // Reset to white
                 }
             }
             

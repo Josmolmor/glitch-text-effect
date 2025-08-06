@@ -175,6 +175,23 @@ function VisualEffectsShowcase() {
         </div>
         
         <div className="p-4 border rounded">
+          <div className="text-sm font-semibold mb-2">Custom Color Shift</div>
+          <GlitchText
+            from="Custom Colors"
+            to="Rainbow!"
+            trigger="hover"
+            effects={{ 
+              colorShift: {
+                enabled: true,
+                colors: ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57'],
+                speed: 2
+              }
+            }}
+            className="text-lg font-bold cursor-pointer"
+          />
+        </div>
+
+        <div className="p-4 border rounded">
           <div className="text-sm font-semibold mb-2">All Effects</div>
           <GlitchText
             from="Chaos"

@@ -21,12 +21,24 @@ export type IntensityLevel = 'low' | 'medium' | 'high';
 export type TimingFunction = 'linear' | 'easeIn' | 'easeOut' | 'easeInOut' | ((_progress: number) => number);
 
 /**
+ * Color shift configuration
+ */
+export interface ColorShiftConfig {
+  /** Enable color shifting */
+  enabled: boolean;
+  /** Array of hex colors to cycle through */
+  colors?: string[];
+  /** Animation speed multiplier */
+  speed?: number;
+}
+
+/**
  * Visual effects that can be applied during glitch
  */
 export interface VisualEffects {
   shake?: boolean;
   flicker?: boolean;
-  colorShift?: boolean;
+  colorShift?: boolean | ColorShiftConfig;
   scalePulse?: boolean;
 }
 
